@@ -1,10 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
-  var BLOB_URL = "https://jsonblob.com/api/jsonBlob/019e73d0-677d-73d9-b60c-33fbb2bb9dc2";
   var LOCAL_KEY = "lisa-phone-bank";
-  var POLL_INTERVAL = 10000;
   var state = {};
-  var syncing = false;
-  var initialized = false;
 
   function loadLocal() {
     try {
@@ -16,67 +12,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function saveLocal() {
     localStorage.setItem(LOCAL_KEY, JSON.stringify(state));
-  }
-
-  // Merge remote into local without losing any logs
-  function mergeState(remote) {
-    if (!remote || typeof remote !== "object") return;
-    Object.keys(remote).forEach(function (callId) {
-      if (!state[callId]) {
-        state[callId] = remote[callId];
-        return;
-      }
-      // Keep checked if either source has it checked
-      if (remote[callId].checked) state[callId].checked = true;
-      // Merge logs by savedAt timestamp to avoid duplicates
-      if (remote[callId].logs && remote[callId].logs.length) {
-        if (!state[callId].logs) state[callId].logs = [];
-        var existing = {};
-        state[callId].logs.forEach(function (l) { existing[l.savedAt] = true; });
-        remote[callId].logs.forEach(function (l) {
-          if (!existing[l.savedAt]) {
-            state[callId].logs.push(l);
-          }
-        });
-        state[callId].logs.sort(function (a, b) {
-          return a.savedAt < b.savedAt ? -1 : 1;
-        });
-      }
-    });
-  }
-
-  function fetchState(callback) {
-    fetch(BLOB_URL)
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        if (data && typeof data === "object" && Object.keys(data).length > 0) {
-          mergeState(data);
-          saveLocal();
-        }
-        if (callback) callback();
-      })
-      .catch(function () {
-        if (callback) callback();
-      });
-  }
-
-  function pushState() {
-    if (syncing) return;
-    syncing = true;
-    saveLocal();
-    fetch(BLOB_URL, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(state)
-    })
-      .then(function (r) {
-        syncing = false;
-        console.log("Saved to remote, status:", r.status);
-      })
-      .catch(function (err) {
-        syncing = false;
-        console.error("Remote save failed:", err);
-      });
   }
 
   function renderAll() {
@@ -137,22 +72,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Load local first so we never start empty
+  // Load state and render
   state = loadLocal();
   renderAll();
 
-  // Then fetch remote and merge
-  fetchState(function () {
-    renderAll();
-    initialized = true;
-    // Push merged state back so remote has everything
-    pushState();
-    setInterval(function () {
-      fetchState(renderAll);
-    }, POLL_INTERVAL);
-  });
-
-  // Bind events immediately (don't wait for remote)
+  // Bind events
   document.querySelectorAll(".call-card").forEach(function (card) {
     var callId = card.getAttribute("data-call");
     var checkbox = card.querySelector('input[type="checkbox"]');
@@ -168,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!state[callId]) state[callId] = {};
       state[callId].checked = checkbox.checked;
       card.classList.toggle("completed", checkbox.checked);
-      pushState();
+      saveLocal();
     });
 
     toggleBtn.addEventListener("click", function () {
@@ -200,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
         savedAt: new Date().toISOString()
       });
 
-      pushState();
+      saveLocal();
 
       nameInput.value = "";
       whenInput.value = "";

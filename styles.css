@@ -238,6 +238,41 @@ blockquote {
   margin-bottom: 4px;
 }
 
+/* Shared Log Entries */
+.log-entries {
+  list-style: none;
+  padding: 0;
+  margin-top: 16px;
+}
+
+.log-entry {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+}
+
+.log-entry-header {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.log-entry-notes {
+  font-size: 14px;
+  color: #374151;
+  white-space: pre-wrap;
+}
+
+.log-name {
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+  max-width: 280px;
+}
+
 /* Call Log */
 .call-log {
   margin-top: 16px;

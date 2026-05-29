@@ -78,6 +78,76 @@ h2 {
   color: #444;
 }
 
+/* Reference Section */
+.reference-section {
+  margin-bottom: 32px;
+}
+
+.toggle-reference {
+  width: 100%;
+  padding: 14px 20px;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #374151;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.toggle-reference:hover {
+  background: #f9fafb;
+}
+
+.toggle-reference::before {
+  content: "\25B6\00a0\00a0";
+  font-size: 12px;
+}
+
+.toggle-reference[aria-expanded="true"]::before {
+  content: "\25BC\00a0\00a0";
+}
+
+.reference-content {
+  margin-top: 12px;
+}
+
+.ref-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.ref-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.ref-card h3 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.ref-card p {
+  font-size: 14px;
+  color: #1f2937;
+  margin-bottom: 2px;
+}
+
+@media (max-width: 600px) {
+  .ref-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Calls Section */
 .calls-section {
   margin-bottom: 40px;

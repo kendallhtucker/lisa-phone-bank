@@ -78,6 +78,17 @@ document.addEventListener("DOMContentLoaded", function () {
     return div.innerHTML;
   }
 
+  // Reference toggle
+  var refToggle = document.querySelector(".toggle-reference");
+  var refContent = document.querySelector(".reference-content");
+  if (refToggle && refContent) {
+    refToggle.addEventListener("click", function () {
+      var expanded = refToggle.getAttribute("aria-expanded") === "true";
+      refToggle.setAttribute("aria-expanded", !expanded);
+      refContent.hidden = expanded;
+    });
+  }
+
   // Initial load, then start polling
   fetchState(function () {
     renderAll();

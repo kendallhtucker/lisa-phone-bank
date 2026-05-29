@@ -69,8 +69,14 @@ document.addEventListener("DOMContentLoaded", function () {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(state)
     })
-      .then(function () { syncing = false; })
-      .catch(function () { syncing = false; });
+      .then(function (r) {
+        syncing = false;
+        console.log("Saved to remote, status:", r.status);
+      })
+      .catch(function (err) {
+        syncing = false;
+        console.error("Remote save failed:", err);
+      });
   }
 
   function renderAll() {
